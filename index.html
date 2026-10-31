@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Deutschy</title>
+  <meta name="description" content="Deutsch lernen – Small Talk, Uni, Tennis & Alltag">
+  <meta name="theme-color" content="#ff6f91">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Deutschy">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar" id="topbar"></header>
+  <main id="view" class="view"></main>
+  <nav class="tabbar" id="tabbar">
+    <button data-act="nav" data-view="today"><span>🏠</span>Heute</button>
+    <button data-act="nav" data-view="learn"><span>📚</span>Lernen</button>
+    <button data-act="nav" data-view="talk"><span>💬</span>Gespräche</button>
+    <button data-act="nav" data-view="evening"><span>🌙</span>Abend</button>
+    <button data-act="nav" data-view="album"><span>📸</span>Album</button>
+  </nav>
+  <div id="modal-root"></div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
