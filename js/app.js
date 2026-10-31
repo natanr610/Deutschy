@@ -56,6 +56,9 @@
     return defaultState();
   }
   let S = load();
+  // pick up the real names if the app was opened before they were set in config.js
+  if (S.herName === 'Schatz' && CFG.herName && CFG.herName !== 'Schatz') S.herName = CFG.herName;
+  if (S.hisName === 'Natan' && CFG.hisName) S.hisName = CFG.hisName;
   function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) { toast('⚠️ Speichern fehlgeschlagen'); } }
   function day(k = dateKey()) {
     if (!S.days[k]) S.days[k] = { xp: 0, newWords: [], correct: 0, wrong: 0, lessons: 0, dialogues: [], diary: null, talk: null, goal: false };

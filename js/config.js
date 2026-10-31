@@ -5,10 +5,10 @@
 // ─────────────────────────────────────────────────────────────
 window.DEUTSCHY_CONFIG = {
   // Her name – used in greetings ("Guten Morgen, …!")
-  herName: "Schatz",
+  herName: "Eichhörnchen",
 
   // Your name – used for the evening talk ("Abendgespräch mit …")
-  hisName: "Natan",
+  hisName: "Nathan",
 
   // XP needed per day to reach the daily goal (≈ 1 lesson + 1 dialogue)
   dailyGoal: 60,
