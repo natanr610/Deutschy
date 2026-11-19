@@ -342,3 +342,15 @@ textarea.fb { width: 100%; min-height: 80px; padding: 12px; border-radius: 14px;
 .wiggle { display: inline-block; animation: wiggle 1.2s ease-in-out infinite; }
 .shake { animation: shake .35s; }
 @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+/* ── Memory hooks & article colours ───── */
+.memo { background: var(--ball-soft); border-left: 4px solid var(--ball-ink); border-radius: 14px; padding: 12px 14px; }
+.memo-head { display: flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--ball-ink); margin-bottom: 4px; }
+.memo-head .muted { text-transform: none; letter-spacing: 0; font-weight: 700; }
+.memo-edit { font-size: .8rem; font-weight: 800; padding: 4px 10px; border-radius: 10px; background: var(--card); color: var(--ink); text-transform: none; letter-spacing: 0; }
+.card.ball .memo { background: var(--card); margin-top: 10px; }
+.memo-line { color: var(--muted); margin-top: 3px; }
+.art-der { color: #3a7bd5; }
+.art-die { color: #e2456d; }
+.art-das { color: #22a565; }
+.bubble.b .art-der, .bubble.b .art-die, .bubble.b .art-das { color: inherit; }

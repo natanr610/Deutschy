@@ -23,6 +23,15 @@
   function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
   function shuffle(arr, r = Math.random) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
   const pick = (arr, r = Math.random) => arr[Math.floor(r() * arr.length)];
+  const MEMOS = window.DEUTSCHY_MEMOS || {};
+  const memoOf = (item) => (S.myMemos && S.myMemos[item.id]) || MEMOS[item.de] || '';
+  // colour the article: der = blue, die = red, das = green (a classic memory aid)
+  const deHTML = (de) => esc(de).replace(/(^|\/ )(der|die|das)( )/g, (_, pre, art, sp) => `${pre}<span class="art-${art}">${art}</span>${sp}`);
+  function memoBox(item, editable = false) {
+    const m = memoOf(item); const own = S.myMemos && S.myMemos[item.id];
+    if (!m && !editable) return '';
+    return `<div class="memo"><div class="memo-head">🧠 ${own ? 'Meine Eselsbrücke' : 'Eselsbrücke'} <span class="muted">· memory hook</span>${editable ? `<span class="spacer"></span><button class="memo-edit" data-act="edit-memo" data-id="${esc(item.id)}">✏️ ${own ? 'ändern' : 'eigene'}</button>` : ''}</div>${m ? `<div>${esc(m)}</div>` : '<div class="muted small">Write your own association – it sticks best!</div>'}</div>`;
+  }
   const fill = (s) => String(s).replace(/\{his\}/g, S.hisName).replace(/\{her\}/g, S.herName);
 
   // ───────────────────────── vocabulary index
@@ -48,7 +57,7 @@
     return {
       v: 1, herName: CFG.herName || 'Schatz', hisName: CFG.hisName || 'Schatz',
       dailyGoal: CFG.dailyGoal || 60, rate: 0.9, newPerLesson: 5,
-      xp: 0, cards: {}, days: {}, unlocked: [], created: dateKey(),
+      xp: 0, cards: {}, days: {}, unlocked: [], myMemos: {}, created: dateKey(),
     };
   }
   function load() {
@@ -266,9 +275,10 @@
 
       <div class="card ball">
         <div class="kicker">Wort des Tages · Word of the day</div>
-        <div class="row" style="margin-top:6px"><div class="wod-de">${esc(wod.de)}</div><div class="spacer"></div>${speakBtn(wod.de)}</div>
+        <div class="row" style="margin-top:6px"><div class="wod-de">${deHTML(wod.de)}</div><div class="spacer"></div>${speakBtn(wod.de)}</div>
         <div class="muted">${esc(wod.en)}</div>
         <div class="example" style="margin-top:10px;background:var(--card)">${esc(wod.ex)}<small>${esc(wod.exEn)}</small></div>
+        ${memoBox(wod)}
       </div>
 
       <div class="card"><div class="kicker">💡 Tipp des Tages</div><h3 style="margin:6px 0">${esc(tip.title)}</h3><div>${tip.text}</div></div>
@@ -307,11 +317,12 @@
     return `<div class="stack">
       <button class="btn ghost small" data-act="nav" data-view="learn">← Themen</button>
       <div class="row"><div style="font-size:2.6rem">${t.emoji}</div><div><h2>${esc(t.name)}</h2><div class="muted">${esc(t.desc)}</div></div></div>
+      <div class="small muted">Farben: <span class="art-der">der</span> · <span class="art-die">die</span> · <span class="art-das">das</span> &nbsp;·&nbsp; 🧠 = Eselsbrücke (memory hook)</div>
       <div class="row"><button class="btn block" data-act="start-topic" data-id="${t.id}" ${due || fresh ? '' : 'disabled'}>Lernen ${fresh ? `(${Math.min(fresh, S.newPerLesson)} neu)` : ''}</button></div>
       <div class="row"><button class="btn ghost block" data-act="start-practice" data-id="${t.id}" ${learnedCount(t.id) >= 4 ? '' : 'disabled'}>🎯 Üben (gelernte Wörter)</button></div>
       <div class="card">${its.map((i) => {
         const c = S.cards[i.id]; const box = c ? c.box : -1;
-        return `<div class="word-row">${speakBtn(i.de)}<div class="grow"><div class="de">${esc(i.de)}</div><div class="small muted">${esc(i.en)}</div></div>
+        return `<div class="word-row">${speakBtn(i.de)}<div class="grow"><div class="de">${deHTML(i.de)}</div><div class="small muted">${esc(i.en)}</div>${memoOf(i) ? `<div class="small memo-line">🧠 ${esc(memoOf(i))}</div>` : ''}</div>
           ${box < 0 ? '<span class="small muted">neu</span>' : `<span class="dots">${Array.from({ length: MAX_BOX }, (_, j) => `<i class="${j < box ? 'on' : ''}"></i>`).join('')}</span>`}</div>`;
       }).join('')}</div></div>`;
   }
@@ -373,8 +384,9 @@
     let body = '';
     if (ex.type === 'intro') {
       body = `<div class="ex-label">✨ Neu · New</div>
-        <div class="row"><div class="prompt">${esc(item.de)}</div><div class="spacer"></div>${speakBtn(item.de)}</div>
+        <div class="row"><div class="prompt">${deHTML(item.de)}</div><div class="spacer"></div>${speakBtn(item.de)}</div>
         <div style="font-size:1.15rem;font-weight:700" class="muted">${esc(item.en)}</div>
+        ${memoBox(item, true)}
         ${item.ex ? `<div class="example">${esc(item.ex)} ${speakBtn(item.ex)}<small>${esc(item.exEn)}</small></div>` : ''}
         <div class="small muted">${TOPIC[item.topic].emoji} ${esc(TOPIC[item.topic].name)}</div>`;
     } else if (ex.type === 'mc_de' || ex.type === 'mc_en' || ex.type === 'listen') {
@@ -389,7 +401,7 @@
         ? `<div class="ex-label">🎧 Was hörst du? · What do you hear?</div><div class="center" style="margin:10px 0">${speakBtn(item.de, true)}
            <div style="margin-top:8px"><button class="btn ghost small" data-act="speak" data-text="${esc(item.de)}" data-rate="0.6">🐢 langsam</button></div></div>`
         : ex.type === 'mc_de'
-          ? `<div class="ex-label">Was bedeutet das? · What does it mean?</div><div class="row"><div class="prompt">${esc(item.de)}</div><div class="spacer"></div>${speakBtn(item.de)}</div>`
+          ? `<div class="ex-label">Was bedeutet das? · What does it mean?</div><div class="row"><div class="prompt">${deHTML(item.de)}</div><div class="spacer"></div>${speakBtn(item.de)}</div>`
           : `<div class="ex-label">Wie sagt man auf Deutsch? · Say it in German</div><div class="prompt">${esc(item.en)}</div>`;
       body = `${head}<div class="options">${ex.opts.map((o, j) => `<button class="opt ${optClass(ex, o)}" data-act="mc" data-j="${j}" ${s.answered ? 'disabled' : ''}>${esc(o.text)}</button>`).join('')}</div>`;
     } else if (ex.type === 'type') {
@@ -428,7 +440,7 @@
     return `<div class="feedback ${a.ok ? 'ok' : 'bad'}"><div class="inner">
       <div class="row"><h3>${a.ok ? `✅ ${a.praise}` : `❌ ${a.praise}`}</h3><div class="spacer"></div>${speakBtn(item.de)}</div>
       ${a.note ? `<div>${a.note}</div>` : ''}
-      ${!a.ok ? `<div>Richtig: <b>${esc(item.de)}</b> = ${esc(item.en)}</div>${extra}` : `<div><b>${esc(item.de)}</b> = ${esc(item.en)}</div>`}
+      ${!a.ok ? `<div>Richtig: <b>${deHTML(item.de)}</b> = ${esc(item.en)}</div>${extra}${memoOf(item) ? `<div class="small">🧠 ${esc(memoOf(item))}</div>` : ''}` : `<div><b>${deHTML(item.de)}</b> = ${esc(item.en)}</div>`}
       <button class="btn ${a.ok ? 'green' : ''} block" data-act="next">Weiter →</button></div></div>`;
   }
   function grade(ok, extra = {}) {
@@ -747,6 +759,14 @@
         const r = $('#set-rate'); if (r) S.rate = Number(r.value);
         const d = day(); if (!d.goal && d.xp >= S.dailyGoal) { d.goal = true; App.pendingRewards.push('goal'); }
         save(); toast('Gespeichert ✓'); render(); flushRewards(); break;
+      }
+      case 'edit-memo': {
+        const it = ITEM[ds.id]; if (!it) return;
+        const v = prompt(`Deine Eselsbrücke für „${it.de}“ (leer = Standard):`, (S.myMemos && S.myMemos[it.id]) || '');
+        if (v === null) return;
+        S.myMemos = S.myMemos || {};
+        if (v.trim()) S.myMemos[it.id] = v.trim(); else delete S.myMemos[it.id];
+        save(); render(); toast(v.trim() ? 'Eselsbrücke gespeichert 🧠' : 'Standard wiederhergestellt'); break;
       }
       case 'toggle-admin': App.showAdmin = !App.showAdmin; render(); break;
       case 'del-photo': if (confirm('Foto löschen?')) { DB.del(ds.id).then(reloadPhotos); } break;

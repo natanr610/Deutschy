@@ -419,6 +419,7 @@ window.DEUTSCHY_CONTENT = {
     { title: "Akkusativ: der → den", text: "Only <b>der</b> changes in the accusative: <b>Ich habe den Satz gewonnen.</b> die/das stay the same: <i>Ich habe die Klausur bestanden.</i>" },
     { title: "seit + Präsens", text: "German uses the present tense with <b>seit</b>: <b>Ich lerne seit einem Monat Deutsch.</b> = I've been learning German for a month." },
     { title: "mal macht's freundlich", text: "Add <b>mal</b> to soften a request: <b>Kannst du mal kurz helfen?</b> It sounds relaxed and friendly." },
+    { title: "Farben für Artikel", text: "In Deutschy the articles have colours: <b style=\"color:#3a7bd5\">der</b> is blue, <b style=\"color:#e2456d\">die</b> is red, <b style=\"color:#22a565\">das</b> is green. Picture the word in its colour – <i>der blaue Kaffee, die rote Prüfung</i> – and the article sticks." },
     { title: "Denglisch", text: "Many English words are used in German – but they get an article: <b>das Match, der Laptop, das Date, das Handy</b> (the mobile phone!)." },
   ],
 

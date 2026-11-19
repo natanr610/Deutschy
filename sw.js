@@ -1,7 +1,7 @@
 // Network-first service worker: always tries to get the latest version,
 // falls back to the cache when offline.
-const CACHE = 'deutschy-v1';
-const CORE = ['./', 'index.html', 'css/style.css', 'js/config.js', 'js/content.js', 'js/app.js', 'icon.svg', 'manifest.webmanifest'];
+const CACHE = 'deutschy-v2';
+const CORE = ['./', 'index.html', 'css/style.css', 'js/config.js', 'js/content.js', 'js/memos.js', 'js/app.js', 'icon.svg', 'manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
